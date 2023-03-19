@@ -144,10 +144,6 @@ fun void play() {
             envelope.duration() + ring::ms => now;
             envelope.keyOff();
             envelope.duration() => now;
-            
-            /*for (0 => int i; i < pans.cap(); i++) {
-                // <<< pans[i] >>>;
-            }*/
         }
         samp => now;
     }
