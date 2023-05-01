@@ -63,18 +63,13 @@ string keys[128];
 "Y" => keys[89];
 "Z" => keys[90];
 
+"`" => keys[96];
 
-PanningDelay delay[4];
 
-delay[0].initialize("Delay 1", 2, 1.333 / 2.0);
-delay[1].initialize("Delay 2", 7, 1.4);
-delay[2].initialize("Delay 3", 9, 2.0);
-delay[3].initialize("Delay 4", 17, 1.125);
-
-0 => int current;
+DistortionObject distortion;
 
 0 => int isArmed;
-"N" => string trigger;
+"/" => string trigger;
 
 while (true) {
     keyboard => now;
@@ -87,50 +82,15 @@ while (true) {
                 key == trigger ? 1 : 0 => isArmed;
                 
                 if (isArmed) {
-                    <<< "DELAY IS ARMED" >>>;
+                    <<< "DISTORTION IS ARMED" >>>;
                 }
             }
-            if (isArmed) {
+            if (isArmed) { 
                 if (key == "") {
                     <<< "----- INVALID (" + message.ascii + ") -----", "" >>>;
                 }
-                
                 if (key == "Q") {
-                    delay[current].turnOn();
-                }
-                if (key == "W") {
-                    delay[current].pitchShift();
-                }
-                if (key == "A") {
-                    delay[current].setDelayInterval(0.9);
-                }
-                if (key == "Z") {
-                    delay[current].setDelayInterval(1.1);
-                }
-                if (key == "S") {
-                    delay[current].setDelayGain(1.03);
-                }
-                if (key == "X") {
-                    delay[current].setDelayGain(0.97);
-                }
-                if (key == " ") {
-                    <<< "", "" >>>;
-                    for (0 => int i; i < delay.size(); i++) {
-                        delay[i].printStatus();   
-                    }
-                    <<< "", "" >>>;
-                }
-                if (key == "1") {
-                    0 => current;
-                }
-                if (key == "2") {
-                    1 => current;
-                }
-                if (key == "3") {
-                    2 => current;
-                }
-                if (key == "4") {
-                    3 => current;
+                    spork ~ distortion.toggleOn();
                 }
             }
         }

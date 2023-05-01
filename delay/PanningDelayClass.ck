@@ -19,9 +19,12 @@ public class PanningDelay {
     
     0 => int masterIsOn;
     0 => int wetIsOn;
+    string name;
     
     
-    fun void initialize(int voiceCount, float interval) {
+    fun void initialize(string name, int voiceCount, float interval) {
+        name => this.name;
+        
         voiceCount * 2 - 2 => int lineCount;
         
         initializeDelay(lineCount) @=> delay;
@@ -126,14 +129,6 @@ public class PanningDelay {
     fun void printStatus() {
         masterIsOn ? "ON" : "OFF" => string masterStatus;
         wetIsOn ? "ON" : "OFF" => string transposeStatus;
-        
-        <<< "", "" >>>;
-        <<< "--------------------STATUS--------------------", "" >>>;        
-        <<< "Master:", masterStatus >>>;
-        <<< "Transpose:", transposeStatus >>>;
-        <<< "Delay Gain:", Std.ftoa(delayGain, 2) >>>;
-        <<< "Delay Interval: ", delayInterval, "ms" >>>;
-        <<< "----------------------------------------------", "" >>>;
-        <<< "", "" >>>;
+        <<< name + ":", masterStatus, "Transpose:", transposeStatus, "Gain:", Std.ftoa(delayGain, 2), "Delay:", delayInterval, "ms" >>>;
     }
 }

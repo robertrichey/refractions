@@ -8,13 +8,8 @@ public class SinOscFM {
 
     
     int ramp;
-
-    
-    0 => int noteIndex;
-    int notes[];
     
     
-    0 => int changeNote;
     0 => int isOn;
     
     
@@ -24,44 +19,36 @@ public class SinOscFM {
     float panSettings[];
     
     
-    fun void play() {
-        while (true) {
-            if (isOn) {
-                if (panMode == 0) {
-                    0 => panning.pan;
-                }
-                else if (panMode == 1) { 
-                    panSettings[panIndex] => panning.pan;
-                    (panIndex + 1) % panSettings.size() => panIndex;
-                }
-                else if (panMode == 2) {
-                    Math.random2f(-1.0, 1.0) => panning.pan;
-                }
-                
-                masterEnvelope.keyOn();
-                masterEnvelope.duration() => now;
-                
-                masterEnvelope.keyOff();
-                masterEnvelope.duration() => now;
-                
-                if (changeNote) {
-                    0 => changeNote;
-                    setNoteToNext();
-                }
-                if (changePan) {
-                    0 => changePan;
-                    setPanMode();
-                }
-            }
-            ms => now;
+    fun void play(int pitch, float duration) {
+        if (panMode == 0) {
+            0 => panning.pan;
+        }
+        else if (panMode == 1) { 
+            panSettings[panIndex] => panning.pan;
+            (panIndex + 1) % panSettings.size() => panIndex;
+        }
+        else if (panMode == 2) {
+            Math.random2f(-1.0, 1.0) => panning.pan;
+        }
+        
+        masterEnvelope.keyOn();
+        masterEnvelope.duration() => now;
+        
+        masterEnvelope.keyOff();
+        masterEnvelope.duration() => now;
+        
+        if (changePan) {
+            0 => changePan;
+            setPanMode();
         }
     }
-    
-    
-    fun void modulate1() {
-        while (true) {
-            envelope1.keyOn();
-            envelope1.duration() => now;
+}
+
+
+fun void modulate1() {
+    while (true) {
+        envelope1.keyOn();
+        envelope1.duration() => now;
             
             envelope1.keyOff();
             envelope1.duration() => now;
@@ -81,15 +68,12 @@ public class SinOscFM {
     fun void initialize() {  
         spork ~ modulate1();
         spork ~ modulate2();
-        spork ~ play();
     }
     
     fun void setCarrier(float gain, int duration, int arr[]) {
         gain => carrier.gain;
         duration => ramp;
         ramp::ms => masterEnvelope.duration;
-        arr @=> notes;
-        Std.mtof(notes[noteIndex] - 4) => carrier.freq;
     }
     
     fun void setModulator1(int frequency, float gain, int duration) {
@@ -120,13 +104,6 @@ public class SinOscFM {
         }
         
         arr @=> panSettings;
-    }
-    
-    
-    fun void setNoteToNext() {
-        (noteIndex + 1) % notes.size() => noteIndex;
-        Std.mtof(notes[noteIndex] - 4) => carrier.freq;
-        <<< notes[noteIndex] >>>;
     }
     
     

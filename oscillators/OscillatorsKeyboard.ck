@@ -63,18 +63,40 @@ string keys[128];
 "Y" => keys[89];
 "Z" => keys[90];
 
+"`" => keys[96];
 
-PanningDelay delay[4];
 
-delay[0].initialize("Delay 1", 2, 1.333 / 2.0);
-delay[1].initialize("Delay 2", 7, 1.4);
-delay[2].initialize("Delay 3", 9, 2.0);
-delay[3].initialize("Delay 4", 17, 1.125);
+SinOscFM wave[4];
 
-0 => int current;
+wave[0].setCarrier(0.3, 4649, [40, 44, 47, 48, 47]);
+wave[0].setModulator1(19919, 673, 2000);
+wave[0].setModulator2(27107, 200, 5000);
+wave[0].setPanning(5);
+wave[0].initialize("Sine 1");
+
+wave[1].setCarrier(0.25, 7283, [59, 60, 58, 62, 63]);
+wave[1].setModulator1(691, 307, 7717);
+wave[1].setModulator2(2729, 157, 6599);
+wave[1].setPanning(11);
+wave[1].initialize("Sine 2");
+
+wave[2].setCarrier(0.25, 2441, [68, 67, 68, 67, 66]);
+wave[2].setModulator1(409, 151, 5099);
+wave[2].setModulator2(1277, 599, 7907);
+wave[2].setPanning(23);
+wave[2].initialize("Sine 3");
+
+wave[3].setCarrier(0.1, 1117, [82, 75, 74, 72, 82]);
+wave[3].setModulator1(9013, 383, 10067);
+wave[3].setModulator2(7951, 223, 14699);
+wave[3].setPanning(41);
+wave[3].initialize("Sine 4");
+
+
+2 => int current;
 
 0 => int isArmed;
-"N" => string trigger;
+"." => string trigger;
 
 while (true) {
     keyboard => now;
@@ -87,38 +109,35 @@ while (true) {
                 key == trigger ? 1 : 0 => isArmed;
                 
                 if (isArmed) {
-                    <<< "DELAY IS ARMED" >>>;
+                    <<< "OSCILLATERS IS ARMED" >>>;
                 }
             }
             if (isArmed) {
                 if (key == "") {
                     <<< "----- INVALID (" + message.ascii + ") -----", "" >>>;
                 }
-                
                 if (key == "Q") {
-                    delay[current].turnOn();
+                    1 ^=> wave[current].isOn;
                 }
                 if (key == "W") {
-                    delay[current].pitchShift();
+                    1 => wave[current].changePan;
+                }
+                if (key == "P") {
+                    for (0 => int i; i < wave.size(); i++) {
+                        1 => wave[i].changeNote;
+                    }
                 }
                 if (key == "A") {
-                    delay[current].setDelayInterval(0.9);
+                    wave[current].setVolume(1.1);
                 }
                 if (key == "Z") {
-                    delay[current].setDelayInterval(1.1);
+                    wave[current].setVolume(0.9);
                 }
                 if (key == "S") {
-                    delay[current].setDelayGain(1.03);
+                    wave[current].setRamp(1.15);
                 }
                 if (key == "X") {
-                    delay[current].setDelayGain(0.97);
-                }
-                if (key == " ") {
-                    <<< "", "" >>>;
-                    for (0 => int i; i < delay.size(); i++) {
-                        delay[i].printStatus();   
-                    }
-                    <<< "", "" >>>;
+                    wave[current].setRamp(0.85);
                 }
                 if (key == "1") {
                     0 => current;
@@ -131,6 +150,13 @@ while (true) {
                 }
                 if (key == "4") {
                     3 => current;
+                }
+                if (key == " ") {
+                    <<< "", "" >>>;
+                    for (0 => int i; i < wave.size(); i++) {
+                        wave[i].printStatus();   
+                    }
+                    <<< "", "" >>>;
                 }
             }
         }

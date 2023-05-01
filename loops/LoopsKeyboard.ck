@@ -63,18 +63,21 @@ string keys[128];
 "Y" => keys[89];
 "Z" => keys[90];
 
+"`" => keys[96];
 
-PanningDelay delay[4];
 
-delay[0].initialize("Delay 1", 2, 1.333 / 2.0);
-delay[1].initialize("Delay 2", 7, 1.4);
-delay[2].initialize("Delay 3", 9, 2.0);
-delay[3].initialize("Delay 4", 17, 1.125);
+LisaObject lisa[4];
 
-0 => int current;
+lisa[0].initialize(1.333, 0, "LiSa 1");
+lisa[1].initialize(1.5 / 2.0, 1, "LiSa 2");
+lisa[2].initialize(0.5, 1, "LiSa 3");
+lisa[3].initialize(1.25, 2, "LiSa 4");
+
+
+1 => int current;
 
 0 => int isArmed;
-"N" => string trigger;
+"M" => string trigger;
 
 while (true) {
     keyboard => now;
@@ -87,38 +90,37 @@ while (true) {
                 key == trigger ? 1 : 0 => isArmed;
                 
                 if (isArmed) {
-                    <<< "DELAY IS ARMED" >>>;
+                    <<< "LOOPING IS ARMED" >>>;
                 }
             }
-            if (isArmed) {
+            if (isArmed) {                
                 if (key == "") {
                     <<< "----- INVALID (" + message.ascii + ") -----", "" >>>;
                 }
-                
                 if (key == "Q") {
-                    delay[current].turnOn();
+                    spork ~ lisa[current].toggleOn();
                 }
                 if (key == "W") {
-                    delay[current].pitchShift();
+                    spork ~ lisa[current].loopMode();
+                }
+                if (key == "O") {
+                    spork ~ lisa[current].record();
                 }
                 if (key == "A") {
-                    delay[current].setDelayInterval(0.9);
+                    spork ~ lisa[current].setVolume(1.1);
                 }
                 if (key == "Z") {
-                    delay[current].setDelayInterval(1.1);
-                }
-                if (key == "S") {
-                    delay[current].setDelayGain(1.03);
-                }
-                if (key == "X") {
-                    delay[current].setDelayGain(0.97);
+                    spork ~ lisa[current].setVolume(0.9);
                 }
                 if (key == " ") {
                     <<< "", "" >>>;
-                    for (0 => int i; i < delay.size(); i++) {
-                        delay[i].printStatus();   
+                    for (0 => int i; i < lisa.size(); i++) {
+                        lisa[i].printStatus();
                     }
                     <<< "", "" >>>;
+                }
+                if (key == "X") {
+                    //spork ~ lisa[current].setPan(1);
                 }
                 if (key == "1") {
                     0 => current;
