@@ -1,4 +1,4 @@
-1# Refractions: An Electroacoustic Prologue
+# Refractions: An Electroacoustic Prologue
 Commissioned for the Wilmington Classical Guitar Society is a duo for classical guitar and
 electronics, this piece was composed in late 2022&ndash;early 2023 and premiered on April 29th of 
 that year by Robert Richy and Matthew Kaplan in Wilmington, Delaware.
